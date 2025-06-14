@@ -1,26 +1,26 @@
 section .data
-    encrypted_message: db 0xEF, 0xDD, 0x8A, 0xBF, 0xCE, 0xD1, 0xC3, 0xC5, 0xCE, 0xC0, 0xC6, 0xD4, 0xD4, 0xD7, 0xDA, 0xE7, 0xED, 0xE4, 0xEF, 0xF8, 0x09
-    msg_len equ $ - encrypted_message
+    message: db 0x49, 0x20, 0x72, 0x65, 0x61, 0x6C, 0x6C, 0x79, 0x20, 0x6C, 0x69, 0x6B, 0x65, 0x20, 0x67, 0x61, 0x6D, 0x65, 0x73, 0x2E
+    msg_len equ $ - message
 
     initial_key equ 0xAA
-    secret_seed equ 0x13
+    seed equ 0x13
 
 section .bss
-    decrypted_buffer: resb msg_len
+    buffer: resb msg_len
 
 section .text
     global _start
 
 _start:
-    mov rsi, encrypted_message
-    mov rdi, decrypted_buffer
+    mov rsi, message
+    mov rdi, buffer
     mov rcx, msg_len
     mov r8b, initial_key
-    mov r9b, secret_seed
+    mov r9b, seed
 
-decrypt_loop_jsxs:
+loop_jsxs:
     cmp rcx, 0
-    je  decrypt_done_jsxs
+    je done_jsxs
 
     mov al, byte [rsi]
     xor al, r8b
@@ -31,12 +31,12 @@ decrypt_loop_jsxs:
     inc rsi
     inc rdi
     dec rcx
-    jmp decrypt_loop_jsxs
+    jmp loop_jsxs
 
-decrypt_done_jsxs:
+done_jsxs:
     mov rax, 1
     mov rdi, 1
-    mov rsi, decrypted_buffer
+    mov rsi, buffer
     mov rdx, msg_len
     dec rdx
     syscall
